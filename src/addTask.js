@@ -13,6 +13,7 @@ const addTask = async (event) => {
       title,
       description,
       createAt,
+      done: false,
    };
 
    await dynamodb
