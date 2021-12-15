@@ -2,14 +2,41 @@ service: aws-lambda-crud-node
 frameworkVersion: '2 || 3'
 
 provider:
-  name: aws
-  runtime: nodejs12.x
-  lambdaHashingVersion: '20201221'
+   name: aws
+   runtime: nodejs12.x
+   lambdaHashingVersion: '20201221'
+   region: us-west-2
+   iamRoleStatements:
+      - Effect: Allow
+        Action:
+           - dynamodb:*
+        Resources:
+           - arn:aws:dynamodb:us-west-2:151640757254:table/TaskTable
 
 functions:
-  hello:
-    handler: handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
+   hello:
+      handler: src/hello.hello
+      events:
+         - httpApi:
+              path: /
+              method: get
+   createTask:
+      handler: src/addTask.addTask
+      events:
+         - httpApi:
+              path: /tasks
+              method: post
+
+resources:
+   Resources:
+      TaskTable:
+         Type: AWS::DynamoDB::Table
+         Properties:
+            TableName: TaskTable
+            BillingMode: PAY_PER_REQUEST
+            AttributeDefinitions:
+               - AttributeName: id
+                 AttributeType: S
+            KeySchema:
+               - AttributeName: id
+                 KeyType: HASH
